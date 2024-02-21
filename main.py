@@ -1,10 +1,23 @@
 import time
+import logging
+from pathlib import Path
 from textwrap import dedent
 
 import requests
 import telegram
 from environs import Env
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(filename)s:%(lineno)d - %(levelname)-8s - %(asctime)s - %(funcName)s - %(name)s - %(message)s'
+)
+
+file_handler = logging.FileHandler(f'{BASE_DIR}/botlog.txt', mode='w')
+
+logger = logging.getLogger(__name__)
+logger.addHandler(file_handler)
 
 def check_api_devman(token, params):
     url = 'https://dvmn.org/api/long_polling/'
@@ -17,7 +30,7 @@ def check_api_devman(token, params):
 
 
 def check_reviews(devman_token, params, bot, tg_chat_id):
-    print('Скрипт запущен!')
+    logger.info('Скрипт запущен!')
     while True:
         try:
             reviews = check_api_devman(devman_token, params)
