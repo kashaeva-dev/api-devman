@@ -46,7 +46,7 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
                 params = {
                     'timestamp': timestamp_to_request,
                 }
-                logger.info('Обновлений не было ', timestamp_to_request)
+                logger.info('Обновлений не было ', str(timestamp_to_request))
             else:
                 current_review = reviews['new_attempts'][0]
                 logger.info('Пришло новое обновление', current_review)
