@@ -32,6 +32,7 @@ def check_api_devman(token, params):
 
 def check_reviews(devman_token, params, bot, tg_chat_id):
     logger.info('Скрипт запущен!')
+    last_timestamp = None
     while True:
         logger.info('Новый цикл')
         try:
@@ -50,6 +51,9 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
             else:
                 current_review = reviews['new_attempts'][0]
                 logger.info(f'Пришло новое обновление, {str(current_review)}')
+                new_timestamp = current_review['timestamp']
+                if new_timestamp == last_timestamp:
+                    continue
                 if current_review['is_negative']:
                     bot.send_message(chat_id=tg_chat_id,
                                      text=dedent(f"""
@@ -67,7 +71,7 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
                                      """),
                                      parse_mode=telegram.ParseMode.MARKDOWN_V2,
                                      )
-
+                last_timestamp = new_timestamp
 
 if __name__ == "__main__":
     env = Env()
