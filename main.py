@@ -72,6 +72,8 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
                                      parse_mode=telegram.ParseMode.MARKDOWN_V2,
                                      )
                 last_timestamp = new_timestamp
+                logger.info(f'Last timestamp is {last_timestamp}')
+
 
 if __name__ == "__main__":
     env = Env()
