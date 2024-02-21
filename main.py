@@ -17,6 +17,7 @@ def check_api_devman(token, params):
 
 
 def check_reviews(devman_token, params, bot, tg_chat_id):
+    print('Скрипт запущен!')
     while True:
         try:
             reviews = check_api_devman(devman_token, params)
