@@ -1,4 +1,5 @@
 import time
+import os
 import logging
 from pathlib import Path
 from textwrap import dedent
@@ -32,6 +33,7 @@ def check_api_devman(token, params):
 def check_reviews(devman_token, params, bot, tg_chat_id):
     logger.info('Скрипт запущен!')
     while True:
+        logger.info('Новый цикл')
         try:
             reviews = check_api_devman(devman_token, params)
         except requests.exceptions.ReadTimeout:
@@ -44,8 +46,10 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
                 params = {
                     'timestamp': timestamp_to_request,
                 }
+                logger.info('Обновлений не было ', timestamp_to_request)
             else:
                 current_review = reviews['new_attempts'][0]
+                logger.info('Пришло новое обновление', current_review)
                 if current_review['is_negative']:
                     bot.send_message(chat_id=tg_chat_id,
                                      text=dedent(f"""
