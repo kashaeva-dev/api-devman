@@ -11,6 +11,12 @@ You can obtain it by following the instructions here.
 **Telegram Bot Token**: You'll also need a Telegram bot token.
 You can create a new bot and obtain a token by talking to the [BotFather](https://t.me/BotFather) on Telegram.
 
+**Telegram Bot Logger Token**: In addition to your main Telegram bot token,
+you will need one more token for a secondary logging bot.
+This additional bot dedicated to error notifications. It will receive error tracebacks ensure that
+you are promptly informed of any problems.
+You can obtain a token by talking to the [BotFather](https://t.me/BotFather) on Telegram.
+
 **Chat ID**: You'll need the Chat ID of the Telegram chat where you want to receive notifications.
 You can get your Chat ID by talking to the [userinfobot](https://web.telegram.org/k/#@userinfobot).
 
