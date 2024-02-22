@@ -1,6 +1,7 @@
 import time
 import os
 import logging
+import logging.handlers
 from pathlib import Path
 from textwrap import dedent
 
@@ -15,10 +16,24 @@ logging.basicConfig(
     format='%(filename)s:%(lineno)d - %(levelname)-8s - %(asctime)s - %(funcName)s - %(name)s - %(message)s'
 )
 
-file_handler = logging.FileHandler(f'{BASE_DIR}/botlog.txt', mode='w')
+
+class BotHandler(logging.Handler):
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        bot.send_message(chat_id=tg_chat_id,
+                         text=dedent(f"{log_entry}"),
+                         parse_mode=telegram.ParseMode.MARKDOWN_V2,
+                         )
+
+
+rotating_file_handler = logging.handlers.RotatingFileHandler(f'{BASE_DIR}/botlog.txt',
+                                                             mode='w', maxBytes=200, backupCount=2)
 
 logger = logging.getLogger(__name__)
-logger.addHandler(file_handler)
+logger.addHandler(rotating_file_handler)
+logger.addHandler(BotHandler())
+
 
 def check_api_devman(token, params):
     url = 'https://dvmn.org/api/long_polling/'
