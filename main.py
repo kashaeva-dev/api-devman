@@ -102,7 +102,6 @@ if __name__ == "__main__":
     tg_chat_id = env('TG_CHAT_ID')
     params = {}
     try:
-        a = 0/0
         bot = telegram.Bot(token=tg_bot_token)
         check_reviews(devman_token, params, bot, tg_chat_id)
     except Exception as error:
