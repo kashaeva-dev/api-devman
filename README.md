@@ -42,9 +42,11 @@ Create a .env file in the project directory and add the following configuration 
 ```
 DEVMAN_TOKEN=your_devman_api_token
 TG_BOT_TOKEN=your_telegram_bot_token
+TG_BOT_LOGGER_TOKEN=your_telegram_bot_logger_token
 CHAT_ID=your_telegram_chat_id
 ```
-Replace your_devman_api_token, your_telegram_bot_token, and your_telegram_chat_id with your actual tokens and chat ID.
+Replace your_devman_api_token, your_telegram_bot_token, your_telegram_bot_logger_token,
+and your_telegram_chat_id with your actual tokens and chat ID.
 
 ## Usage
 Run the script using Python:
@@ -54,6 +56,7 @@ python main.py
 ```
 The script will start checking for new reviews on Devman.
 When a new review is found, it will send you a Telegram notification.
+If an exception occur bot logger will send you a Telegram notification with it's traceback.
 
 ## Example notification
 
