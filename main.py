@@ -20,10 +20,10 @@ logging.basicConfig(
 class BotHandler(logging.Handler):
 
     def emit(self, record):
+        bot = telegram.Bot(token=tg_bot_logger_token)
         log_entry = self.format(record)
         bot.send_message(chat_id=tg_chat_id,
-                         text=dedent(f"{log_entry}"),
-                         parse_mode=telegram.ParseMode.MARKDOWN_V2,
+                         text=fr'{log_entry}',
                          )
 
 
@@ -98,7 +98,12 @@ if __name__ == "__main__":
     env.read_env()
     devman_token = env.str('DEVMAN_TOKEN')
     tg_bot_token = env('TG_BOT_TOKEN')
+    tg_bot_logger_token = env('TG_BOT_LOGGER_TOKEN')
     tg_chat_id = env('TG_CHAT_ID')
     params = {}
-    bot = telegram.Bot(token=tg_bot_token)
-    check_reviews(devman_token, params, bot, tg_chat_id)
+    try:
+        a = 0/0
+        bot = telegram.Bot(token=tg_bot_token)
+        check_reviews(devman_token, params, bot, tg_chat_id)
+    except Exception as error:
+        logger.exception(error)
