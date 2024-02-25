@@ -1,38 +1,12 @@
-import time
-import os
 import logging
 import logging.handlers
+import time
 from pathlib import Path
 from textwrap import dedent
 
 import requests
 import telegram
 from environs import Env
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(filename)s:%(lineno)d - %(levelname)-8s - %(asctime)s - %(funcName)s - %(name)s - %(message)s'
-)
-
-
-class BotHandler(logging.Handler):
-
-    def emit(self, record):
-        bot = telegram.Bot(token=tg_bot_logger_token)
-        log_entry = self.format(record)
-        bot.send_message(chat_id=tg_chat_id,
-                         text=fr'{log_entry}',
-                         )
-
-
-rotating_file_handler = logging.handlers.RotatingFileHandler(f'{BASE_DIR}/botlog.txt',
-                                                             mode='w', maxBytes=200, backupCount=2)
-
-logger = logging.getLogger(__name__)
-logger.addHandler(rotating_file_handler)
-logger.addHandler(BotHandler())
 
 
 def check_api_devman(token, params):
@@ -45,11 +19,9 @@ def check_api_devman(token, params):
     return response.json()
 
 
-def check_reviews(devman_token, params, bot, tg_chat_id):
-    logger.info('Скрипт запущен!')
+def check_reviews(devman_token, params, bot, tg_chat_id, logger):
     last_timestamp = None
     while True:
-        logger.info('Новый цикл')
         try:
             reviews = check_api_devman(devman_token, params)
         except requests.exceptions.ReadTimeout:
@@ -62,7 +34,6 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
                 params = {
                     'timestamp': timestamp_to_request,
                 }
-                logger.info(f'Обновлений не было, {str(timestamp_to_request)}')
             else:
                 current_review = reviews['new_attempts'][0]
                 params = {
@@ -93,7 +64,37 @@ def check_reviews(devman_token, params, bot, tg_chat_id):
                 logger.info(f'Last timestamp is {last_timestamp}')
 
 
-if __name__ == "__main__":
+def set_logger(tg_bot_logger_token, tg_chat_id):
+    BASE_DIR = Path(__file__).resolve().parent
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(filename)s:%(lineno)d - %(levelname)-8s - %(asctime)s - %(funcName)s - %(name)s - %(message)s',
+    )
+
+    class BotHandler(logging.Handler):
+        def __init__(self, tg_bot_logger_token, tg_chat_id):
+            super().__init__()
+            self.tg_bot_logger_token = tg_bot_logger_token
+            self.tg_chat_id = tg_chat_id
+
+        def emit(self, record):
+            bot = telegram.Bot(token=tg_bot_logger_token)
+            log_entry = self.format(record)
+            bot.send_message(chat_id=tg_chat_id,
+                             text=fr'{log_entry}',
+                             )
+
+    rotating_file_handler = logging.handlers.RotatingFileHandler(f'{BASE_DIR}/botlog.txt',
+                                                                 mode='w', maxBytes=200, backupCount=2)
+
+    logger = logging.getLogger(__name__)
+    logger.addHandler(rotating_file_handler)
+    logger.addHandler(BotHandler(tg_bot_logger_token, tg_chat_id))
+
+    return logger
+
+def main():
     env = Env()
     env.read_env()
     devman_token = env.str('DEVMAN_TOKEN')
@@ -101,8 +102,15 @@ if __name__ == "__main__":
     tg_bot_logger_token = env('TG_BOT_LOGGER_TOKEN')
     tg_chat_id = env('TG_CHAT_ID')
     params = {}
+
+    logger = set_logger(tg_bot_logger_token, tg_chat_id)
+
     try:
         bot = telegram.Bot(token=tg_bot_token)
-        check_reviews(devman_token, params, bot, tg_chat_id)
+        check_reviews(devman_token, params, bot, tg_chat_id, logger)
     except Exception as error:
         logger.exception(error)
+
+
+if __name__ == "__main__":
+    main()
