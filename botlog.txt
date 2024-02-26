@@ -1,0 +1,6 @@
+float division by zero
+Traceback (most recent call last):
+  File "/Users/nataly/Projects/api-devman/main.py", line 114, in main
+    0.1 / 0
+    ~~~~^~~
+ZeroDivisionError: float division by zero

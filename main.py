@@ -9,6 +9,9 @@ import telegram
 from environs import Env
 
 
+logger = logging.getLogger(__file__)
+
+
 class BotHandler(logging.Handler):
     def __init__(self, tg_bot_logger_token, tg_chat_id):
         super().__init__()
