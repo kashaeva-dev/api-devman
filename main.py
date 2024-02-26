@@ -62,18 +62,18 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                     continue
                 if current_review['is_negative']:
                     bot.send_message(chat_id=tg_chat_id,
-                                     text=dedent(f"""
-                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*\.
-                                     К сожалению, в работе нашлись ошибки\.
+                                     text=dedent(fr"""
+                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*.
+                                     К сожалению, в работе нашлись ошибки.
                                      [Ссылка на работу]({current_review["lesson_url"]})
                                      """),
                                      parse_mode=telegram.ParseMode.MARKDOWN_V2,
                                      )
                 else:
                     bot.send_message(chat_id=tg_chat_id,
-                                     text=dedent(f"""
-                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*\.
-                                     Преподавателю все понравилось, можно приступать к следующему уроку\.
+                                     text=dedent(fr"""
+                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*.
+                                     Преподавателю все понравилось, можно приступать к следующему уроку.
                                      """),
                                      parse_mode=telegram.ParseMode.MARKDOWN_V2,
                                      )
