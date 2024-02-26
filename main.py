@@ -81,7 +81,7 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                 logger.info(f'Last timestamp is {last_timestamp}')
 
 
-def set_logger(tg_bot_logger_token, tg_chat_id):
+def config_logger(tg_bot_logger_token, tg_chat_id, logger):
     BASE_DIR = Path(__file__).resolve().parent
 
     logging.basicConfig(
@@ -92,14 +92,13 @@ def set_logger(tg_bot_logger_token, tg_chat_id):
     rotating_file_handler = logging.handlers.RotatingFileHandler(f'{BASE_DIR}/botlog.txt',
                                                                  mode='w', maxBytes=200, backupCount=2)
 
-    logger = logging.getLogger(__name__)
     logger.addHandler(rotating_file_handler)
     logger.addHandler(BotHandler(tg_bot_logger_token, tg_chat_id))
 
     return logger
 
 
-def main():
+def main(logger=logger):
     env = Env()
     env.read_env()
     devman_token = env.str('DEVMAN_TOKEN')
@@ -108,7 +107,7 @@ def main():
     tg_chat_id = env('TG_CHAT_ID')
     params = {}
 
-    logger = set_logger(tg_bot_logger_token, tg_chat_id)
+    logger = config_logger(tg_bot_logger_token, tg_chat_id, logger)
 
     try:
         bot = telegram.Bot(token=tg_bot_token)
