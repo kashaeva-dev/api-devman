@@ -9,6 +9,9 @@ import telegram
 from environs import Env
 
 
+logger = logging.getLogger(__file__)
+
+
 class BotHandler(logging.Handler):
     def __init__(self, tg_bot_logger_token, tg_chat_id):
         super().__init__()
@@ -60,8 +63,8 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                 if current_review['is_negative']:
                     bot.send_message(chat_id=tg_chat_id,
                                      text=dedent(fr"""
-                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*.
-                                     К сожалению, в работе нашлись ошибки.
+                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*\.
+                                     К сожалению, в работе нашлись ошибки\.
                                      [Ссылка на работу]({current_review["lesson_url"]})
                                      """),
                                      parse_mode=telegram.ParseMode.MARKDOWN_V2,
@@ -69,8 +72,8 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                 else:
                     bot.send_message(chat_id=tg_chat_id,
                                      text=dedent(fr"""
-                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*.
-                                     Преподавателю все понравилось, можно приступать к следующему уроку.
+                                     Преподаватель проверил работу *"{current_review["lesson_title"]}"*\.
+                                     Преподавателю все понравилось, можно приступать к следующему уроку\.
                                      """),
                                      parse_mode=telegram.ParseMode.MARKDOWN_V2,
                                      )
@@ -78,7 +81,7 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                 logger.info(f'Last timestamp is {last_timestamp}')
 
 
-def config_logger(tg_bot_logger_token, tg_chat_id):
+def config_logger(tg_bot_logger_token, tg_chat_id, logger):
     BASE_DIR = Path(__file__).resolve().parent
 
     logging.basicConfig(
@@ -89,12 +92,8 @@ def config_logger(tg_bot_logger_token, tg_chat_id):
     rotating_file_handler = logging.handlers.RotatingFileHandler(f'{BASE_DIR}/botlog.txt',
                                                                  mode='w', maxBytes=200, backupCount=2)
 
-    logger = logging.getLogger('__name__')
-
     logger.addHandler(rotating_file_handler)
     logger.addHandler(BotHandler(tg_bot_logger_token, tg_chat_id))
-
-    return logger
 
 
 def main():
@@ -106,7 +105,7 @@ def main():
     tg_chat_id = env('TG_CHAT_ID')
     params = {}
 
-    logger = config_logger(tg_bot_logger_token, tg_chat_id)
+    config_logger(tg_bot_logger_token, tg_chat_id, logger)
 
     try:
         bot = telegram.Bot(token=tg_bot_token)
