@@ -65,7 +65,7 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                                      text=dedent(fr"""
                                      Преподаватель проверил работу "{current_review["lesson_title"]}"\\.
                                      К сожалению, в работе нашлись ошибки\\.
-                                     [Ссылка на работу]({current_review["lesson_url"]})
+                                     [Ссылка на работу]\\({current_review["lesson_url"]}\\)
                                      """),
                                      parse_mode=telegram.ParseMode.HTML,
                                      )
