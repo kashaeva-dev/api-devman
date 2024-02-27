@@ -12,13 +12,6 @@ from environs import Env
 logger = logging.getLogger(__file__)
 
 
-def escape_markdown_v2(text):
-    escape_chars = ['.', '(', ')', '-', '+', '=', '|', '{', '}', '!', '>', '#', '[', ']', '*', '_', '~', '`']
-    for char in escape_chars:
-        text = text.replace(char, '\\' + char)
-    return text
-
-
 class BotHandler(logging.Handler):
     def __init__(self, tg_bot_logger_token, tg_chat_id):
         super().__init__()
@@ -63,29 +56,28 @@ def check_reviews(devman_token, params, bot, tg_chat_id, logger):
                 params = {
                     'timestamp': current_review['timestamp'],
                 }
-                logger.info(f'Пришло новое обновление, {str(current_review)}')
+
                 new_timestamp = current_review['timestamp']
                 if new_timestamp == last_timestamp:
                     continue
                 if current_review['is_negative']:
                     bot.send_message(chat_id=tg_chat_id,
-                                     text=dedent(f"""
-                                     Преподаватель проверил работу *"{escape_markdown_v2(current_review["lesson_title"])}"*\\.
+                                     text=dedent(fr"""
+                                     Преподаватель проверил работу "{current_review["lesson_title"]}"\\.
                                      К сожалению, в работе нашлись ошибки\\.
-                                     [Ссылка на работу](escape_markdown_v2({current_review["lesson_url"]}))
+                                     [Ссылка на работу]({current_review["lesson_url"]})
                                      """),
-                                     parse_mode=telegram.ParseMode.MARKDOWN_V2,
+                                     parse_mode=telegram.ParseMode.HTML,
                                      )
                 else:
                     bot.send_message(chat_id=tg_chat_id,
-                                     text=dedent(f"""
-                                     Преподаватель проверил работу *"{escape_markdown_v2(current_review["lesson_title"])}"*\\.
+                                     text=dedent(fr"""
+                                     Преподаватель проверил работу "{current_review["lesson_title"]}"\\.
                                      Преподавателю все понравилось, можно приступать к следующему уроку\\.
                                      """),
-                                     parse_mode=telegram.ParseMode.MARKDOWN_V2,
+                                     parse_mode=telegram.ParseMode.HTML,
                                      )
                 last_timestamp = new_timestamp
-                logger.info(f'Last timestamp is {last_timestamp}')
 
 
 def config_logger(tg_bot_logger_token, tg_chat_id, logger):
