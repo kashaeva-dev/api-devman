@@ -64,6 +64,30 @@ The script will start checking for new reviews on Devman.
 When a new review is found, it will send you a Telegram notification.
 If an exception occur bot logger will send you a Telegram notification with it's traceback.
 
+## Installation and Usage with Docker
+1. Pull the image:
+
+```
+docker pull kashaeva/devman-bot:latest
+```
+
+2. Create a .env file and add the following configuration variables:
+
+```
+DEVMAN_TOKEN=your_devman_api_token
+TG_BOT_TOKEN=your_telegram_bot_token
+TG_BOT_LOGGER_TOKEN=your_telegram_bot_logger_token
+CHAT_ID=your_telegram_chat_id
+```
+Replace your_devman_api_token, your_telegram_bot_token, your_telegram_bot_logger_token,
+and your_telegram_chat_id with your actual tokens and chat ID.
+
+3. Run the image:
+
+```
+docker run --name devman-bot --env-file ./path/to/the/env/file kashaeva/devman-bot
+```
+
 ## Example notification
 
 ![img.png](img.png)
